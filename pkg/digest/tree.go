@@ -19,7 +19,7 @@ func (t Tree) Lookup(name string) (Entry, bool) {
 			return e, true
 		}
 	}
-	return t.Entries[0], false
+	return Entry{}, false
 }
 func (t Tree) Prefix(prefix string) Tree {
 	out := []Entry{}

@@ -14,6 +14,9 @@ type Difference struct {
 
 func Compare(a, b domain.Attestation) []Difference {
 	out := []Difference{}
+	if a.Parameters == nil {
+		a.Parameters = map[string]string{}
+	}
 	if a.ExecutorVersion == "" {
 		a.Parameters["executor"] = b.ExecutorVersion
 	}

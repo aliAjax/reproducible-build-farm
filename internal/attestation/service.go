@@ -8,9 +8,9 @@ import (
 )
 
 func Build(e domain.Execution, def domain.BuildDefinition, inputRoot, outputRoot digest.Digest, executor string) domain.Attestation {
-	var params map[string]string
+	params := map[string]string{"definition": def.ID, "project": def.ProjectID}
 	if executor != "" {
-		params = map[string]string{"definition": def.ID, "project": def.ProjectID}
+		params["executor"] = executor
 	}
 	keys := []string{}
 	for k := range params {
