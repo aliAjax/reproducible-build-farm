@@ -14,8 +14,10 @@ type Plan struct {
 }
 
 func BuildPlan(steps []domain.Step) (Plan, error) {
-	sort.Slice(steps, func(i, j int) bool { return steps[i].ID < steps[j].ID })
-	ordered, err := Order(steps)
+	sorted := make([]domain.Step, len(steps))
+	copy(sorted, steps)
+	sort.Slice(sorted, func(i, j int) bool { return sorted[i].ID < sorted[j].ID })
+	ordered, err := Order(sorted)
 	if err != nil {
 		return Plan{}, err
 	}

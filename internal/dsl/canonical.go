@@ -2,17 +2,23 @@ package dsl
 
 import (
 	"encoding/json"
+	"example.com/reproducible-build-farm/internal/domain"
 	"fmt"
 	"sort"
 	"strings"
 )
 
 func Canonical(doc Document) ([]byte, error) {
-	steps := doc.Steps
+	steps := make([]domain.Step, len(doc.Steps))
+	copy(steps, doc.Steps)
 	sort.Slice(steps, func(i, j int) bool { return steps[i].ID < steps[j].ID })
 	for i := range steps {
-		sort.Strings(steps[i].Dependencies)
-		sort.Strings(steps[i].Args)
+		deps := append([]string(nil), steps[i].Dependencies...)
+		sort.Strings(deps)
+		steps[i].Dependencies = deps
+		args := append([]string(nil), steps[i].Args...)
+		sort.Strings(args)
+		steps[i].Args = args
 		env := map[string]string{}
 		keys := make([]string, 0, len(steps[i].Env))
 		for k := range steps[i].Env {

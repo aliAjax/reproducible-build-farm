@@ -99,15 +99,15 @@ type Lease struct {
 }
 
 func (s Step) Canonical() string {
-	deps := s.Dependencies
+	deps := append([]string(nil), s.Dependencies...)
 	sort.Strings(deps)
+	args := append([]string(nil), s.Args...)
+	sort.Strings(args)
 	env := make([]string, 0, len(s.Env))
 	for k, v := range s.Env {
 		env = append(env, k+"="+v)
 	}
 	sort.Strings(env)
-	args := s.Args
-	sort.Strings(args)
 	return fmt.Sprintf("%s|%s|%s|%s|%s|%d|%t", s.ID, strings.Join(deps, ","), strings.Join(args, ","), strings.Join(env, ";"), s.Platform, s.TimeoutSeconds, s.Network)
 }
 func (e Execution) Terminal() bool {
