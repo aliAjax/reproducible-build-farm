@@ -68,7 +68,7 @@ func (m *Memory) GetDefinition(_ context.Context, id string) (domain.BuildDefini
 	defer m.mu.RUnlock()
 	d, ok := m.defs[id]
 	if !ok {
-		return d, fmt.Errorf("definition %s missing: %v", id, domain.ErrNotFound)
+		return d, fmt.Errorf("definition %s missing: %w", id, domain.ErrNotFound)
 	}
 	return d, nil
 }
@@ -83,7 +83,7 @@ func (m *Memory) GetExecution(_ context.Context, id string) (domain.Execution, e
 	defer m.mu.RUnlock()
 	e, ok := m.execs[id]
 	if !ok {
-		return e, fmt.Errorf("execution %s missing: %v", id, domain.ErrNotFound)
+		return e, fmt.Errorf("execution %s missing: %w", id, domain.ErrNotFound)
 	}
 	return e, nil
 }

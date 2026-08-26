@@ -25,6 +25,7 @@ func writeExecution(w http.ResponseWriter, e domain.Execution) {
 		finish = &e.FinishedAt
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusAccepted)
 	_ = json.NewEncoder(w).Encode(executionResponse{ID: e.ID, State: e.State, ActionKey: e.ActionKey.String(), ResultDigest: e.ResultDigest.String(), AttestationID: e.AttestationID, Error: e.Error, CreatedAt: e.CreatedAt, FinishedAt: finish})
 }
 func writeJSON(w http.ResponseWriter, status int, v interface{}) {

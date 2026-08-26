@@ -21,7 +21,7 @@ func main() {
 		addr = ":8080"
 	}
 	log.Printf("build farm listening on %s", addr)
-	if err := http.ListenAndServe(addr, transport.New(app).Mux); err != nil {
+	if err := http.ListenAndServe(addr, transport.New(app).Handler()); err != nil {
 		log.Fatal(err)
 	}
 }
