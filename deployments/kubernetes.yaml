@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: buildfarm}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: buildfarm}}
+  template:
+    metadata: {labels: {app: buildfarm}}
+    spec:
+      containers:
+        - name: buildfarm
+          image: buildfarm:dev
+          ports: [{containerPort: 8080}]
+          env: [{name: HTTP_ADDR, value: ":8080"}]
+          readinessProbe: {httpGet: {path: /readyz, port: 8080}}
+          livenessProbe: {httpGet: {path: /healthz, port: 8080}}
+          securityContext: {runAsNonRoot: true, readOnlyRootFilesystem: true}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: buildfarm}
+spec:
+  selector: {app: buildfarm}
+  ports: [{port: 8080, targetPort: 8080}]
