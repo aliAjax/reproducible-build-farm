@@ -59,6 +59,9 @@ func Order(steps []domain.Step) ([]domain.Step, error) {
 			}
 		}
 	}
+	if len(out) != len(steps) {
+		return nil, fmt.Errorf("cycle detected in step dependencies")
+	}
 	return out, nil
 }
 func ValidateShallow(steps []domain.Step) error {
