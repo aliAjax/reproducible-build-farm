@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: Reproducible Build Farm API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      responses: {"200": {description: healthy}}
+  /api/v1/projects:
+    post:
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/Project'}}}
+      responses: {"200": {description: created}}
+  /api/v1/build-definitions:
+    post:
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/DefinitionRequest'}}}
+      responses: {"200": {description: created}, "400": {description: invalid DSL}}
+  /api/v1/executions:
+    post:
+      parameters: [{in: header, name: Idempotency-Key, schema: {type: string}}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/ExecutionRequest'}}}
+      responses: {"202": {description: accepted}}
+  /api/v1/executions/{id}:
+    get:
+      parameters: [{in: path, name: id, required: true, schema: {type: string}}]
+      responses: {"200": {description: execution}, "404": {description: not found}}
+components:
+  schemas:
+    Project: {type: object, required: [id, name], properties: {id: {type: string}, name: {type: string}, owner: {type: string}}}
+    DefinitionRequest: {type: object, required: [id, projectID, DSL], properties: {id: {type: string}, projectID: {type: string}, DSL: {type: object}}}
+    ExecutionRequest: {type: object, required: [id, definitionID], properties: {id: {type: string}, definitionID: {type: string}, idempotencyKey: {type: string}}}
