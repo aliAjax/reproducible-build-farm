@@ -26,6 +26,7 @@ func (f *FileSnapshot) Save(s Snapshot) error {
 		return err
 	}
 	tmp := f.path + ".tmp"
+	defer os.Remove(tmp) // sweep any leftover temp file on any failure path
 	b, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {
 		return err

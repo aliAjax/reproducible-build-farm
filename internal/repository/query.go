@@ -42,7 +42,6 @@ func (m *Memory) DeleteExpiredCache(nowUnix int64) int {
 		if !v.ExpiresAt.IsZero() && v.ExpiresAt.Unix() <= nowUnix {
 			delete(m.cache, k)
 			n++
-			break
 		}
 	}
 	return n

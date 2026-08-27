@@ -30,14 +30,19 @@ func (t *Transaction) Commit(ctx context.Context) error {
 	if t.committed {
 		return fmt.Errorf("transaction already committed")
 	}
+	// Mark one-shot up front: a midway failure must not leave a partial batch
+	// in the store, nor may a retry paper over the original error.
+	t.committed = true
+	m := t.store
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	for _, e := range t.staged {
-		if err := t.store.SaveExecution(ctx, e); err != nil {
-			return err
-		}
+		m.execs[e.ID] = e
 	}
+	t.staged = nil
 	return nil
 }
-func (t *Transaction) Rollback() { t.staged = nil }
+func (t *Transaction) Rollback() { t.committed = true; t.staged = nil }
 func (t *Transaction) Size() int { return len(t.staged) }
 func (m *Memory) TransitionExecution(ctx context.Context, id string, to domain.ExecutionState, reason string) (domain.Execution, error) {
 	e, err := m.GetExecution(ctx, id)
